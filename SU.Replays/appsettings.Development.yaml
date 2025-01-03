@@ -1,0 +1,9 @@
+Serilog:
+  Using: [ "Serilog.Sinks.Console" ]
+  MinimumLevel:
+    Default: Verbose
+
+Server:
+  ConnectionString: "Data Source=./dev/data.db"
+  CorsOrigins:
+    - "http://localhost:5237/"

@@ -1,0 +1,28 @@
+﻿@using SU.Replays.Database.Models
+@using SU.Replays.Services
+
+<div>
+    <h4>@GetDateAndTime()</h4>
+    <p>Players: @Replay.Participants.Count</p>
+</div>
+
+@code {
+    [Parameter]
+    public required Replay Replay { get; set; }
+
+    private string GetDateAndTime()
+    {
+        var name = Path.GetFileName(Replay.FileLocation);
+
+        var match = ReplayUpdater.ReplayFileNameRegex.Match(name);
+
+        if (match.Success)
+        {
+            return $"{match.Groups[1].Value} #{match.Groups[2].Value}";
+        }
+        else
+        {
+            return name;
+        }
+    }
+}

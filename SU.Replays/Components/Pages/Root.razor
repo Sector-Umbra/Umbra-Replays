@@ -1,0 +1,104 @@
+﻿@page "/"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using SU.Replays.Database.Models
+@using SU.Replays.Helpers
+
+@inject ReplayHelper ReplayHelper
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@attribute [Authorize]
+
+<PageTitle>Replays</PageTitle>
+
+@if (User != null)
+{
+    <p>Logged in as: <i>@User.Identity!.Name</i></p>
+    <a href="logout">Logout</a>
+    <br/>
+}
+
+<button @onclick="PreviousPage" disabled="@(Page == 1)">Previous</button>
+
+@for (var i = 1; i <= TotalPages; i++)
+{
+    <button @onclick="() => ChangePage(i - 1)" class="@(i == Page ? "active" : "")">
+        @i
+    </button>
+}
+
+<button @onclick="NextPage" disabled="@(Page * PageSize >= TotalReplays)">Next</button>
+
+
+<ul>
+    @foreach (var replay in PagedReplays)
+    {
+        <li>
+            <ReplayItem Replay="@replay"/>
+        </li>
+    }
+</ul>
+
+@code {
+    private List<Replay> Replays { get; set; } = new List<Replay>();
+    private List<Replay> PagedReplays { get; set; } = new List<Replay>();
+
+    private int Page { get; set; } = 1;
+    private int PageSize { get; set; } = 10;
+    private int TotalReplays => Replays.Count;
+    private int TotalPages => (int)Math.Ceiling((double)TotalReplays / PageSize);
+
+    private ClaimsPrincipal? User { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User;
+
+        var groups = ReplayHelper.GetGroups(User);
+        if (ReplayHelper.AllAccessRoles.Any(role => groups.Contains(role)))
+        {
+            Replays = await ReplayHelper.GetAllReplays();
+        }
+        else
+        {
+            var userId = ReplayHelper.GetSsId(User);
+            Replays = await ReplayHelper.GetFilteredReplays(userId);
+        }
+
+        LoadPagedData();
+    }
+
+    private void LoadPagedData()
+    {
+        PagedReplays = Replays
+            .Skip((Page - 1) * PageSize)
+            .Take(PageSize)
+            .ToList();
+    }
+
+    private void NextPage()
+    {
+        if (Page * PageSize < TotalReplays)
+        {
+            Page++;
+            LoadPagedData();
+        }
+    }
+
+    private void PreviousPage()
+    {
+        if (Page > 1)
+        {
+            Page--;
+            LoadPagedData();
+        }
+    }
+
+    private void ChangePage(int page)
+    {
+        Page = page;
+        LoadPagedData();
+    }
+}
