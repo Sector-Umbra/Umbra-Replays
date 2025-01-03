@@ -1,14 +1,21 @@
-﻿@using SU.Replays.Database.Models
+﻿@using System.Web
+@using SU.Replays.Database.Models
 @using SU.Replays.Services
 
 <div>
     <h4>@GetDateAndTime()</h4>
     <p>Players: @Replay.Participants.Count</p>
+    <a href="download-replay?file=@GetEncodedFileLocation()" target="_blank">Download</a>
 </div>
 
 @code {
     [Parameter]
     public required Replay Replay { get; set; }
+
+    private string GetEncodedFileLocation()
+    {
+        return HttpUtility.UrlEncode(Replay.FileLocation);
+    }
 
     private string GetDateAndTime()
     {
