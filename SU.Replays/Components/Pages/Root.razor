@@ -13,11 +13,19 @@
 
 <PageTitle>Replays</PageTitle>
 
+<h2>How does this work?</h2>
+<p style="margin-left: 20px !important;">
+    This site serves the replays for Sector-Umbra. You log into your Space Station 14 Account via OAuth and it will show you what replays you were a part of. <br/> From there you can download the replay and play it just like any other. Use the buttons below for page navigation. The player count, round id and date can be used to narrow down the search so you can find the round you wanted to watch.
+</p>
+<br/>
+
 @if (User != null)
 {
-    <p>Logged in as: <i>@User.Identity!.Name</i></p>
-    <a href="logout">Logout</a>
-    <br/>
+    <div class="account-control">
+        <p>Logged in as: <i>@User.Identity!.Name</i></p>
+        <a href="logout">Logout</a>
+        <br/>
+    </div>
 }
 
 <button @onclick="PreviousPage" disabled="@(Page == 1)">Previous</button>

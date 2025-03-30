@@ -5,14 +5,20 @@ html, body {
 button {
     margin: 5px;
     padding: 10px;
+    color: white !important;
 }
 
 button.active {
     font-weight: bold;
     background-color: lightblue;
+    color: black;
 }
 
 button:disabled {
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+p {
+    margin-left: 0 !important;
 }
