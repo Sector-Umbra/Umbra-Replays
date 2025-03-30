@@ -1,11 +1,20 @@
-﻿<!DOCTYPE html>
+﻿@using SU.Replays.Helpers
+
+@inject SiteConfigHelper SiteConfigHelper
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <base href="/"/>
+    @foreach (var stylesheetUrl in SiteConfigHelper.GetStylesheetUrls())
+    {
+        <link rel="stylesheet" href="stylesheet?url=@stylesheetUrl"/>
+    }
     <link rel="stylesheet" href="@Assets["app.css"]"/>
+
     <ImportMap/>
     <HeadOutlet @rendermode="InteractiveServer"/>
 </head>

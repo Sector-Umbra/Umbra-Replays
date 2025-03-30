@@ -65,6 +65,7 @@ builder.Services.AddSingleton<ReplayUpdater>();
 builder.Services.AddHostedService<BackgroundServiceStarter<ReplayUpdater>>();
 
 builder.Services.AddScoped<ReplayHelper>();
+builder.Services.AddSingleton<SiteConfigHelper>();
 
 #if DEBUG
 builder.Services.AddScoped<IReplayParticipantsProvider, DebugReplayParticipantsProvider>();

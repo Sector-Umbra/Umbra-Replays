@@ -15,3 +15,8 @@ Serilog:
   Enrich: [ "FromLogContext" ]
 
 AllowedHosts: "*"
+
+Site:
+  ExternalStyleSheets:
+    - https://raw.githubusercontent.com/Sector-Umbra/sector-umbra.net/refs/heads/main/src/styles/layout.css
+    - https://raw.githubusercontent.com/Sector-Umbra/sector-umbra.net/refs/heads/main/src/styles/base.css
