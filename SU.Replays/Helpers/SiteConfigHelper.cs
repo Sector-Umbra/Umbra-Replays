@@ -102,4 +102,7 @@ public sealed class SiteConfigHelper
 
         return new MarkupString(sb.ToString());
     }
+
+    public int ItemsPerPage => _siteConfiguration.ItemsPerPage;
+    public int MaxPageButtons => _siteConfiguration.MaxPageButtons;
 }

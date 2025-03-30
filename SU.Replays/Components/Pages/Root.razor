@@ -8,6 +8,7 @@
 
 @inject ReplayHelper ReplayHelper
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SiteConfigHelper SiteConfigHelper
 
 @attribute [Authorize]
 
@@ -15,7 +16,8 @@
 
 <h2>How does this work?</h2>
 <p style="margin-left: 20px !important;">
-    This site serves the replays for Sector-Umbra. You log into your Space Station 14 Account via OAuth and it will show you what replays you were a part of. <br/> From there you can download the replay and play it just like any other. Use the buttons below for page navigation. The player count, round id and date can be used to narrow down the search so you can find the round you wanted to watch.
+    This site serves the replays for Sector-Umbra. You log into your Space Station 14 Account via OAuth and it will show you what replays you were a part of. <br/>
+    From there you can download the replay and play it just like any other. Use the buttons below for page navigation. The player count, round id, and date can be used to narrow down the search so you can find the round you wanted to watch.
 </p>
 <br/>
 
@@ -28,17 +30,46 @@
     </div>
 }
 
+@{
+    var startPage = Math.Max(1, Page - SiteConfigHelper.MaxPageButtons / 2);
+    var endPage = Math.Min(TotalPages, startPage + SiteConfigHelper.MaxPageButtons - 1);
+
+    if (endPage - startPage + 1 < SiteConfigHelper.MaxPageButtons)
+    {
+        startPage = Math.Max(1, endPage - SiteConfigHelper.MaxPageButtons + 1);
+    }
+}
+
 <button @onclick="PreviousPage" disabled="@(Page == 1)">Previous</button>
 
-@for (var i = 1; i <= TotalPages; i++)
+@if (startPage > 1)
 {
-    <button @onclick="() => ChangePage(i - 1)" class="@(i == Page ? "active" : "")">
+    <button @onclick="() => ChangePage(1)">1</button>
+    @if (startPage > 2)
+    {
+        <span>...</span>
+    }
+}
+
+@for (var i = startPage; i <= endPage; i++)
+{
+    var pageNumber = i;
+
+    <button @onclick="() => ChangePage(pageNumber)" class="@(i == Page ? "active" : "")">
         @i
     </button>
 }
 
-<button @onclick="NextPage" disabled="@(Page * PageSize >= TotalReplays)">Next</button>
+@if (endPage < TotalPages)
+{
+    @if (endPage < TotalPages - 1)
+    {
+        <span>...</span>
+    }
+    <button @onclick="() => ChangePage(TotalPages)">@TotalPages</button>
+}
 
+<button @onclick="NextPage" disabled="@(Page * SiteConfigHelper.ItemsPerPage >= TotalReplays)">Next</button>
 
 <ul>
     @foreach (var replay in PagedReplays)
@@ -54,9 +85,8 @@
     private List<Replay> PagedReplays { get; set; } = new List<Replay>();
 
     private int Page { get; set; } = 1;
-    private int PageSize { get; set; } = 10;
     private int TotalReplays => Replays.Count;
-    private int TotalPages => (int)Math.Ceiling((double)TotalReplays / PageSize);
+    private int TotalPages => (int)Math.Ceiling((double)TotalReplays / SiteConfigHelper.ItemsPerPage);
 
     private ClaimsPrincipal? User { get; set; }
 
@@ -81,14 +111,14 @@
     private void LoadPagedData()
     {
         PagedReplays = Replays
-            .Skip((Page - 1) * PageSize)
-            .Take(PageSize)
+            .Skip((Page - 1) * SiteConfigHelper.ItemsPerPage)
+            .Take(SiteConfigHelper.ItemsPerPage)
             .ToList();
     }
 
     private void NextPage()
     {
-        if (Page * PageSize < TotalReplays)
+        if (Page * SiteConfigHelper.ItemsPerPage < TotalReplays)
         {
             Page++;
             LoadPagedData();

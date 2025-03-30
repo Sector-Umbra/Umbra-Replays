@@ -36,4 +36,14 @@ public class SiteConfiguration
     /// Timeout in seconds for the http client.
     /// </summary>
     public int HttpTimeout { get; set; } = 5000;
+
+    /// <summary>
+    /// How many replays to show per page.
+    /// </summary>
+    public int ItemsPerPage { get; set; } = 8;
+
+    /// <summary>
+    /// How many page buttons to show at once.
+    /// </summary>
+    public int MaxPageButtons { get; set; } = 8;
 }
